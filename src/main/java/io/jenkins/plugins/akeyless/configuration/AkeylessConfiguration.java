@@ -1,5 +1,7 @@
 package io.jenkins.plugins.akeyless.configuration;
 
+import static hudson.Util.fixEmptyAndTrim;
+
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
@@ -14,16 +16,13 @@ import io.akeyless.client.ApiClient;
 import io.akeyless.client.Configuration;
 import io.akeyless.client.api.V2Api;
 import io.jenkins.plugins.akeyless.credentials.AkeylessCredential;
+import java.io.Serializable;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
-
-import java.io.Serializable;
-import java.util.List;
-
-import static hudson.Util.fixEmptyAndTrim;
 
 /**
  * @author alexeydolgopyatov
