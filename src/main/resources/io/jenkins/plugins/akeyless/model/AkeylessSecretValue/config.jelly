@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <f:entry title="Environment Variable" field="envVar">
+        <f:textbox/>
+    </f:entry>
+
+    <f:entry title="Key name" field="secretKey">
+        <f:textbox/>
+    </f:entry>
+
+    <f:entry field="isRequired">
+        <f:checkbox title="Required?" default="${descriptor.DEFAULT_IS_REQUIRED}" />
+    </f:entry>
+
+    <f:entry title="">
+        <div align="right">
+            <f:repeatableDeleteButton/>
+        </div>
+    </f:entry>
+
+</j:jelly>

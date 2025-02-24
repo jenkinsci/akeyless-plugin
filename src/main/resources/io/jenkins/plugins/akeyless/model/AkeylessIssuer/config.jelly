@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <f:entry title="Path" field="path">
+        <f:textbox/>
+    </f:entry>
+    <f:entry title="Output Name" field="name">
+        <f:textbox/>
+    </f:entry>
+    <f:entry title="Certificate User Name" field="certName">
+        <f:textbox/>
+    </f:entry>
+    <f:entry title="Public key" field="publicKey">
+        <f:textarea/>
+    </f:entry>
+    <f:entry title="CSR in base64" field="csrBase">
+        <f:textarea/>
+    </f:entry>
+
+    <f:entry>
+        <f:repeatableProperty field="secretValues" minimum="1" add="Add a key/value pair"/>
+    </f:entry>
+
+    <f:entry title="">
+        <div align="right">
+            <f:repeatableDeleteButton/>
+        </div>
+    </f:entry>
+
+</j:jelly>
