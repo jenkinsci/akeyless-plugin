@@ -3,6 +3,7 @@ package io.jenkins.plugins.akeyless.credentials;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
+import hudson.util.Secret;
 import io.akeyless.client.model.Auth;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -11,7 +12,7 @@ public class AkeylessCertCredentials extends AbstractAkeylessBaseStandardCredent
 
     private String accessId;
     private String certificate;
-    private String privateKey;
+    private Secret privateKey;
 
     @DataBoundConstructor
     public AkeylessCertCredentials(CredentialsScope scope, String id, String description) {
@@ -26,7 +27,7 @@ public class AkeylessCertCredentials extends AbstractAkeylessBaseStandardCredent
         return certificate;
     }
 
-    public String getPrivateKey() {
+    public Secret getPrivateKey() {
         return privateKey;
     }
 
@@ -41,7 +42,7 @@ public class AkeylessCertCredentials extends AbstractAkeylessBaseStandardCredent
     }
 
     @DataBoundSetter
-    public void setPrivateKey(String privateKey) {
+    public void setPrivateKey(Secret privateKey) {
         this.privateKey = privateKey;
     }
 
@@ -50,7 +51,7 @@ public class AkeylessCertCredentials extends AbstractAkeylessBaseStandardCredent
         auth.setAccessId(accessId);
         auth.setAccessType("cert");
         auth.setCertData(certificate);
-        auth.setKeyData(privateKey);
+        auth.setKeyData(privateKey.getPlainText());
         return auth;
     }
 
