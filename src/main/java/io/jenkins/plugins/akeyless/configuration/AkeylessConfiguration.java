@@ -12,9 +12,6 @@ import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.security.ACL;
 import hudson.util.ListBoxModel;
-import io.akeyless.client.ApiClient;
-import io.akeyless.client.Configuration;
-import io.akeyless.client.api.V2Api;
 import io.jenkins.plugins.akeyless.credentials.AkeylessCredential;
 import java.io.Serializable;
 import java.util.List;
@@ -100,9 +97,7 @@ public class AkeylessConfiguration extends AbstractDescribableImpl<AkeylessConfi
                 || (parent.getDisableChildPoliciesOverride() != null && parent.getDisableChildPoliciesOverride())) {
             result.setPolicies(parent.getPolicies());
         }
-        //        if (result.timeout == null) {
-        //            result.setTimeout(parent.getTimeout());
-        //        }
+
         if (result.failIfNotFound == null) {
             result.setFailIfNotFound(parent.failIfNotFound);
         }
@@ -155,8 +150,6 @@ public class AkeylessConfiguration extends AbstractDescribableImpl<AkeylessConfi
 
         public static final boolean DEFAULT_SKIP_SSL_VERIFICATION = false;
 
-        public static final int DEFAULT_ENGINE_VERSION = 2;
-
         @Override
         @NonNull
         public String getDisplayName() {
@@ -185,11 +178,5 @@ public class AkeylessConfiguration extends AbstractDescribableImpl<AkeylessConfi
         }
 
         return url;
-    }
-
-    public V2Api getAkeylessApi() {
-        ApiClient client = Configuration.getDefaultApiClient();
-        client.setBasePath(this.getAkeylessUrl());
-        return new V2Api(client);
     }
 }

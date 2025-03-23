@@ -165,7 +165,7 @@ public class AkeylessBindingStep extends Step {
 
         @Override
         public String getFunctionName() {
-            return "withVault";
+            return "withAkeyless";
         }
 
         @NonNull

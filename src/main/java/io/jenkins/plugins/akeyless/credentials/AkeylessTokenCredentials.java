@@ -1,7 +1,6 @@
 package io.jenkins.plugins.akeyless.credentials;
 
 import com.cloudbees.plugins.credentials.CredentialsScope;
-import hudson.Extension;
 import hudson.util.Secret;
 import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -32,13 +31,13 @@ public class AkeylessTokenCredentials extends AbstractAkeylessBaseStandardCreden
         return payload;
     }
 
-    @Extension
-    public static class DescriptorImpl extends BaseStandardCredentialsDescriptor {
-
-        @Nonnull
-        @Override
-        public String getDisplayName() {
-            return "Akeyless t-Token Credentials";
-        }
-    }
+    //    @Extension
+    //    public static class DescriptorImpl extends BaseStandardCredentialsDescriptor {
+    //
+    //        @Nonnull
+    //        @Override
+    //        public String getDisplayName() {
+    //            return "Akeyless t-Token Credentials";
+    //        }
+    //    }
 }

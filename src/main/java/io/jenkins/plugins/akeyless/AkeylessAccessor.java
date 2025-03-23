@@ -129,22 +129,12 @@ public class AkeylessAccessor implements Serializable {
                 String newVal = "{\"data\": \"" + tempVal + "\"}";
                 tempVal = gson.fromJson(JSONObject.fromObject(newVal).toString(), LinkedTreeMap.class);
             }
-            Map<String, Object> innerValues = (LinkedTreeMap) tempVal;
-            if (innerValues == null) {
-                innerValues = (LinkedTreeMap) values.get("value");
-                if (innerValues == null) {
-                    innerValues = new LinkedTreeMap<>();
-                    innerValues.putAll(values);
-                }
-            }
-            if (innerValues.get(DATA_KEY) == null) {
-                innerValues.put(DATA_KEY, JSONObject.fromObject(innerValues).toString());
-            }
+            Map<String, Object> innerValues = fillDataValues((LinkedTreeMap) tempVal, values);
             for (AkeylessSecretValue value : akeylessSecret.getSecretValues()) {
-                String vaultKey = value.getSecretKey();
-                Object secret = innerValues.get(vaultKey);
-                if ((secret == null || ((String) secret).isEmpty()) && value.getIsRequired()) {
-                    throw new IllegalArgumentException("Required secret " + vaultKey + " at " + path
+                String key = value.getSecretKey();
+                Object secret = innerValues.get(key);
+                if (secret == null && value.getIsRequired()) {
+                    throw new IllegalArgumentException("Required secret " + key + " at " + path
                             + " is either null or empty. Please check the Secret name and type in Akeyless.");
                 }
                 if (secret != null) {
@@ -155,10 +145,24 @@ public class AkeylessAccessor implements Serializable {
         }
     }
 
+    private static Map<String, Object> fillDataValues(LinkedTreeMap innerValues, Map<String, Object> values) {
+        if (innerValues == null) {
+            innerValues = (LinkedTreeMap) values.get("value");
+            if (innerValues == null) {
+                innerValues = new LinkedTreeMap<>();
+                innerValues.putAll(values);
+            }
+        }
+        if (innerValues.get(DATA_KEY) == null) {
+            innerValues.put(DATA_KEY, JSONObject.fromObject(innerValues).toString());
+        }
+        return innerValues;
+    }
+
     public static AkeylessCredential retrieveAkeylessCredentials(Run build, AkeylessConfiguration config) {
         if (Jenkins.getInstanceOrNull() != null) {
             String id = config.getAkeylessCredentialId();
-            if (StringUtils.isBlank(id)) {
+            if (StringUtils.isEmpty(id)) {
                 throw new AkeylessPluginException(
                         "The credential id was not configured - please specify the credentials to use.");
             }
@@ -239,7 +243,8 @@ public class AkeylessAccessor implements Serializable {
                     sshCertificate.setJson(true);
                     sshCertificate.setCertIssuerName(issuer.getPath());
                     sshCertificate.setPublicKeyData(issuer.getPublicKey());
-                    sshCertificate.setCertUsername(issuer.getCertName());
+                    sshCertificate.setCertUsername(issuer.getCertUserName());
+                    sshCertificate.setTtl(issuer.getTtl());
                     GetSSHCertificateOutput sshout = getApi().getSSHCertificate(sshCertificate);
                     Map<String, String> forJson = new LinkedTreeMap<>();
                     forJson.put("data", sshout.getData());
@@ -250,7 +255,7 @@ public class AkeylessAccessor implements Serializable {
                     pkiCertificate.certIssuerName(issuer.getPath());
                     pkiCertificate.setToken(token);
                     pkiCertificate.setJson(true);
-                    pkiCertificate.setCsrDataBase64(issuer.getCsrBase());
+                    pkiCertificate.setCsrDataBase64(issuer.getCsrBase64());
                     GetPKICertificateOutput pki = getApi().getPKICertificate(pkiCertificate);
                     forJson = new LinkedTreeMap<>();
                     forJson.put("data", pki.getData());

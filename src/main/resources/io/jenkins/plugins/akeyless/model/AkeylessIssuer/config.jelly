@@ -7,15 +7,17 @@
     <f:entry title="Output Name" field="name">
         <f:textbox/>
     </f:entry>
-    <f:entry title="Certificate User Name" field="certName">
+    <f:entry title="Certificate User Name" field="certUserName">
         <f:textbox/>
     </f:entry>
     <f:entry title="Public key" field="publicKey">
         <f:textarea/>
     </f:entry>
-    <f:entry title="CSR in base64" field="csrBase">
+    <f:entry title="CSR in base64" field="csrBase64">
         <f:textarea/>
     </f:entry>
+
+
 
     <f:entry>
         <f:repeatableProperty field="secretValues" minimum="1" add="Add a key/value pair"/>
