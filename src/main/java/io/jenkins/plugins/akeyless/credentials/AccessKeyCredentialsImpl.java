@@ -4,6 +4,7 @@ import com.cloudbees.plugins.credentials.CredentialsScope;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import io.akeyless.client.model.Auth;
+import javax.annotation.CheckForNull;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
@@ -12,11 +13,15 @@ import org.kohsuke.stapler.DataBoundSetter;
  */
 public class AccessKeyCredentialsImpl extends AbstractAkeylessBaseStandardCredentials implements AkeylessCredential {
 
-    private String accessKey;
-    private String accessId;
+    @NonNull
+    private String accessKey = "";
+
+    @NonNull
+    private String accessId = "";
 
     @DataBoundConstructor
-    public AccessKeyCredentialsImpl(CredentialsScope scope, String id, String description) {
+    public AccessKeyCredentialsImpl(
+            @CheckForNull CredentialsScope scope, @CheckForNull String id, @CheckForNull String description) {
         super(scope, id, description);
     }
 
@@ -66,7 +71,7 @@ public class AccessKeyCredentialsImpl extends AbstractAkeylessBaseStandardCreden
         @NonNull
         @Override
         public String getDisplayName() {
-            return "Akeyless Access Key Credentials";
+            return "Akeyless API Key";
         }
     }
 }

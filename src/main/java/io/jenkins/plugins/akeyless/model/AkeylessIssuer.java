@@ -1,24 +1,32 @@
 package io.jenkins.plugins.akeyless.model;
 
-import static hudson.Util.fixEmptyAndTrim;
-
+import com.google.common.base.Strings;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
+import hudson.Util;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.util.FormValidation;
 import java.util.List;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 
 /**
  * @author alexeydolgopyatov
  */
 public class AkeylessIssuer extends AbstractDescribableImpl<AkeylessIssuer> implements AkeylessSecretBase {
-
     private String path;
-    private String name;
+
+    private String outputFile;
+
     private String certUserName;
+
     private String publicKey;
+
     private String csrBase64;
-    private long ttl;
+
+    @NonNull
+    private long ttl = 0;
 
     private List<AkeylessSecretValue> secretValues;
 
@@ -29,11 +37,11 @@ public class AkeylessIssuer extends AbstractDescribableImpl<AkeylessIssuer> impl
             String certUserName,
             String publicKey,
             String csrBase64,
-            long ttl,
+            @NonNull long ttl,
             List<AkeylessSecretValue> secretValues) {
-        this.path = fixEmptyAndTrim(path);
+        this.path = Util.fixEmptyAndTrim(path);
         this.secretValues = secretValues;
-        this.name = name;
+        this.outputFile = name;
         this.certUserName = certUserName;
         this.publicKey = publicKey;
         this.csrBase64 = csrBase64;
@@ -44,8 +52,8 @@ public class AkeylessIssuer extends AbstractDescribableImpl<AkeylessIssuer> impl
         return this.path;
     }
 
-    public String getName() {
-        return this.name;
+    public String getOutputFile() {
+        return this.outputFile;
     }
 
     public String getCertUserName() {
@@ -74,6 +82,16 @@ public class AkeylessIssuer extends AbstractDescribableImpl<AkeylessIssuer> impl
         @Override
         public String getDisplayName() {
             return "Akeyless Issuer";
+        }
+
+        public FormValidation doCheckPath(@QueryParameter String value) {
+            if (!Strings.isNullOrEmpty(value)) return FormValidation.ok();
+            else return FormValidation.error("This field can not be empty");
+        }
+
+        public FormValidation doCheckCertUserName(@QueryParameter String value) {
+            if (!Strings.isNullOrEmpty(value)) return FormValidation.ok();
+            else return FormValidation.error("This field can not be empty");
         }
     }
 }

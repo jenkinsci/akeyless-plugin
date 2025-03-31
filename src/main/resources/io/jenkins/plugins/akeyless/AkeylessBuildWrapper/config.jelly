@@ -5,8 +5,8 @@
         </f:section>
         <f:entry>
                 <f:repeatableProperty field="akeylessSecrets" minimum="0" header="Akeyless Secret"
-                                      add="Add Akeyless secret"/>
+                                      add="Add Secret"/>
                 <f:repeatableProperty field="akeylessIssuers" minimum="0" header="Akeyless Issuer"
-                                      add="Add Akeyless Issuer"/>
+                                      add="Add Issuer"/>
         </f:entry>
 </j:jelly>

@@ -1,15 +1,12 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:c="/lib/credentials">
-        <f:entry title="Akeyless URL">
+        <f:entry title="Gateway URL" field="gwUrl">
                 <f:textbox field="akeylessUrl" name="akeylessUrl"/>
         </f:entry>
-        <f:entry title="Access Method" field="akeylessCredentialId">
+        <f:entry title="Auth Method" field="akeylessCredentialId">
                 <c:select/>
         </f:entry>
         <f:advanced>
-                <f:entry title="Fail if path is not found" field="failIfNotFound">
-                        <f:checkbox default="${descriptor.DEFAULT_FAIL_NOT_FOUND}"/>
-                </f:entry>
                 <f:entry title="Skip SSL verification" field="skipSslVerification">
                         <f:checkbox default="${descriptor.DEFAULT_SKIP_SSL_VERIFICATION}"/>
                 </f:entry>

@@ -80,6 +80,8 @@ public class AkeylessAccessor implements Serializable {
 
         ApiClient client = Configuration.getDefaultApiClient();
         client.setBasePath(url);
+        client.setVerifyingSsl(!config.getSkipSslVerification());
+        client.setConnectTimeout(config.getTimeout());
         V2Api api = new V2Api(client);
         accessor = new AkeylessAccessor(api, credential);
 
@@ -254,6 +256,7 @@ public class AkeylessAccessor implements Serializable {
                     GetPKICertificate pkiCertificate = new GetPKICertificate();
                     pkiCertificate.certIssuerName(issuer.getPath());
                     pkiCertificate.setToken(token);
+                    pkiCertificate.setTtl(Long.toString(issuer.getTtl()));
                     pkiCertificate.setJson(true);
                     pkiCertificate.setCsrDataBase64(issuer.getCsrBase64());
                     GetPKICertificateOutput pki = getApi().getPKICertificate(pkiCertificate);

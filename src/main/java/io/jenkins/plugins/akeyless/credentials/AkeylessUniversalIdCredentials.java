@@ -29,7 +29,7 @@ public class AkeylessUniversalIdCredentials extends AkeylessTokenCredentials {
         @NonNull
         @Override
         public String getDisplayName() {
-            return "Akeyless Universal Identity Credentials";
+            return "Akeyless Universal Identity";
         }
     }
 }

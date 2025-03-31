@@ -26,15 +26,16 @@ import org.kohsuke.stapler.QueryParameter;
  */
 public class AkeylessConfiguration extends AbstractDescribableImpl<AkeylessConfiguration> implements Serializable {
     private static final long serialVersionUID = 1L;
+    private static final int DEFAULT_TIMEOUT = 60;
 
     private String akeylessUrl;
     private String akeylessCredentialId;
     private AkeylessCredential akeylessCredential;
     private Boolean disableChildPoliciesOverride;
-    private Boolean failIfNotFound = DescriptorImpl.DEFAULT_FAIL_NOT_FOUND;
     private String policies;
 
     private Boolean skipSslVerification = DescriptorImpl.DEFAULT_SKIP_SSL_VERIFICATION;
+    private Integer timeout = DEFAULT_TIMEOUT;
 
     @DataBoundConstructor
     public AkeylessConfiguration() {
@@ -45,10 +46,10 @@ public class AkeylessConfiguration extends AbstractDescribableImpl<AkeylessConfi
         this.akeylessUrl = toCopy.getAkeylessUrl();
         this.akeylessCredentialId = toCopy.getAkeylessCredentialId();
         this.akeylessCredential = toCopy.getAkeylessCredential();
-        this.failIfNotFound = toCopy.failIfNotFound;
         this.skipSslVerification = toCopy.skipSslVerification;
         this.policies = toCopy.policies;
         this.disableChildPoliciesOverride = toCopy.disableChildPoliciesOverride;
+        this.timeout = toCopy.timeout;
     }
 
     public String getAkeylessUrl() {
@@ -98,22 +99,13 @@ public class AkeylessConfiguration extends AbstractDescribableImpl<AkeylessConfi
             result.setPolicies(parent.getPolicies());
         }
 
-        if (result.failIfNotFound == null) {
-            result.setFailIfNotFound(parent.failIfNotFound);
-        }
         if (result.skipSslVerification == null) {
             result.setSkipSslVerification(parent.skipSslVerification);
         }
+        if (result.timeout == null) {
+            result.setTimeout(parent.getTimeout());
+        }
         return result;
-    }
-
-    public Boolean getFailIfNotFound() {
-        return failIfNotFound;
-    }
-
-    @DataBoundSetter
-    public void setFailIfNotFound(Boolean failIfNotFound) {
-        this.failIfNotFound = failIfNotFound;
     }
 
     public Boolean getSkipSslVerification() {
@@ -143,10 +135,17 @@ public class AkeylessConfiguration extends AbstractDescribableImpl<AkeylessConfi
         this.policies = fixEmptyAndTrim(policies);
     }
 
+    public Integer getTimeout() {
+        return timeout;
+    }
+
+    @DataBoundSetter
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
+    }
+
     @Extension
     public static class DescriptorImpl extends Descriptor<AkeylessConfiguration> {
-
-        public static final boolean DEFAULT_FAIL_NOT_FOUND = true;
 
         public static final boolean DEFAULT_SKIP_SSL_VERIFICATION = false;
 

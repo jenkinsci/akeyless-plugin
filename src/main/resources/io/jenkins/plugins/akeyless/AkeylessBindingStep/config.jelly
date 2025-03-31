@@ -6,6 +6,7 @@
         <f:entry>
                 <f:repeatableProperty field="akeylessSecrets" minimum="0" header="Akeyless Secret"
                                       add="Add Akeyless secret"/>
+
                 <f:repeatableProperty field="akeylessIssuers" minimum="0" header="Akeyless Issuer"
                                       add="Add Akeyless Issuer"/>
         </f:entry>

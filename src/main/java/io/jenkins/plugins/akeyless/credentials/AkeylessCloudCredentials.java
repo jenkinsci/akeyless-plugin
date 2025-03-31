@@ -6,23 +6,30 @@ import hudson.Extension;
 import hudson.model.Item;
 import hudson.util.ListBoxModel;
 import io.akeyless.client.model.Auth;
+import javax.annotation.CheckForNull;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 public class AkeylessCloudCredentials extends AbstractAkeylessBaseStandardCredentials implements AkeylessCredential {
-    private String accessId;
-    private String cloudType;
+    @NonNull
+    private String accessId = "";
+
+    @NonNull
+    private String cloudType = "aws_iam";
 
     @DataBoundConstructor
-    public AkeylessCloudCredentials(CredentialsScope scope, String id, String description) {
+    public AkeylessCloudCredentials(
+            @CheckForNull CredentialsScope scope, @CheckForNull String id, @CheckForNull String description) {
         super(scope, id, description);
     }
 
+    @NonNull
     public String getAccessId() {
         return accessId;
     }
 
+    @NonNull
     public String getCloudType() {
         return cloudType;
     }
@@ -61,7 +68,7 @@ public class AkeylessCloudCredentials extends AbstractAkeylessBaseStandardCreden
             ListBoxModel options = new ListBoxModel(
                     new ListBoxModel.Option("AWS-IAM", "aws_iam"),
                     new ListBoxModel.Option("GCP", "gcp"),
-                    new ListBoxModel.Option("Azure", "azure_ad"));
+                    new ListBoxModel.Option("Azure-AD", "azure_ad"));
 
             if (context != null) {
                 ListBoxModel.Option option = new ListBoxModel.Option("Default", "");
