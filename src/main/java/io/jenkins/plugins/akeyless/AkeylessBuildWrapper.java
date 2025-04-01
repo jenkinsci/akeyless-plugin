@@ -11,7 +11,8 @@ import hudson.model.TaskListener;
 import hudson.tasks.BuildWrapperDescriptor;
 import io.jenkins.plugins.akeyless.configuration.AkeylessConfigResolver;
 import io.jenkins.plugins.akeyless.configuration.AkeylessConfiguration;
-import io.jenkins.plugins.akeyless.model.AkeylessIssuer;
+import io.jenkins.plugins.akeyless.model.AkeylessPKIIssuer;
+import io.jenkins.plugins.akeyless.model.AkeylessSSHIssuer;
 import io.jenkins.plugins.akeyless.model.AkeylessSecret;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -31,21 +32,29 @@ public class AkeylessBuildWrapper extends SimpleBuildWrapper {
     private transient AkeylessAccessor accessor;
     private AkeylessConfiguration configuration;
     private List<String> valuesToMask = new ArrayList<>();
-    private List<AkeylessIssuer> akeylessIssuers;
+    private List<AkeylessPKIIssuer> akeylessPKIIssuers;
+    private List<AkeylessSSHIssuer> akeylessSSHIssuers;
 
     @DataBoundConstructor
     public AkeylessBuildWrapper(
-            @CheckForNull List<AkeylessSecret> akeylessSecrets, @CheckForNull List<AkeylessIssuer> akeylessIssuers) {
+            @CheckForNull List<AkeylessSecret> akeylessSecrets,
+            @CheckForNull List<AkeylessPKIIssuer> akeylessPKIIssuers,
+            @CheckForNull List<AkeylessSSHIssuer> akeylessSSHIssuers) {
         this.akeylessSecrets = akeylessSecrets;
-        this.akeylessIssuers = akeylessIssuers;
+        this.akeylessPKIIssuers = akeylessPKIIssuers;
+        this.akeylessSSHIssuers = akeylessSSHIssuers;
     }
 
     public List<AkeylessSecret> getAkeylessSecrets() {
         return this.akeylessSecrets;
     }
 
-    public List<AkeylessIssuer> getAkeylessIssuers() {
-        return this.akeylessIssuers;
+    public List<AkeylessPKIIssuer> getAkeylessPKIIssuers() {
+        return this.akeylessPKIIssuers;
+    }
+
+    public List<AkeylessSSHIssuer> getAkeylessSSHIssuers() {
+        return this.akeylessSSHIssuers;
     }
 
     @DataBoundSetter
@@ -78,7 +87,14 @@ public class AkeylessBuildWrapper extends SimpleBuildWrapper {
 
     private void retrieveSecretsAndSetToEnvironments(Context context, Run<?, ?> build, EnvVars envVars) {
         Map<String, String> overrides = AkeylessAccessor.retrieveSecrets(
-                build, logger, envVars, accessor, getConfiguration(), getAkeylessSecrets(), getAkeylessIssuers());
+                build,
+                logger,
+                envVars,
+                accessor,
+                getConfiguration(),
+                getAkeylessSecrets(),
+                getAkeylessPKIIssuers(),
+                getAkeylessSSHIssuers());
 
         for (Map.Entry<String, String> secret : overrides.entrySet()) {
             valuesToMask.add(secret.getValue());

@@ -10,7 +10,8 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.Secret;
 import io.jenkins.plugins.akeyless.configuration.AkeylessConfiguration;
-import io.jenkins.plugins.akeyless.model.AkeylessIssuer;
+import io.jenkins.plugins.akeyless.model.AkeylessPKIIssuer;
+import io.jenkins.plugins.akeyless.model.AkeylessSSHIssuer;
 import io.jenkins.plugins.akeyless.model.AkeylessSecret;
 import java.io.IOException;
 import java.util.*;
@@ -25,21 +26,29 @@ public class AkeylessBindingStep extends Step {
 
     private AkeylessConfiguration configuration;
     private List<AkeylessSecret> akeylessSecrets;
-    private List<AkeylessIssuer> akeylessIssuers;
+    private List<AkeylessPKIIssuer> akeylessPKIIssuers;
+    private List<AkeylessSSHIssuer> akeylessSSHIssuers;
 
     @DataBoundConstructor
     public AkeylessBindingStep(
-            @CheckForNull List<AkeylessSecret> akeylessSecrets, @CheckForNull List<AkeylessIssuer> akeylessIssuers) {
+            @CheckForNull List<AkeylessSecret> akeylessSecrets,
+            @CheckForNull List<AkeylessPKIIssuer> akeylessPKIIssuers,
+            @CheckForNull List<AkeylessSSHIssuer> akeylessSSHIssuers) {
         this.akeylessSecrets = akeylessSecrets;
-        this.akeylessIssuers = akeylessIssuers;
+        this.akeylessPKIIssuers = akeylessPKIIssuers;
+        this.akeylessSSHIssuers = akeylessSSHIssuers;
     }
 
     public List<AkeylessSecret> getAkeylessSecrets() {
         return akeylessSecrets;
     }
 
-    public List<AkeylessIssuer> getAkeylessIssuers() {
-        return akeylessIssuers;
+    public List<AkeylessPKIIssuer> getAkeylessPKIIssuers() {
+        return akeylessPKIIssuers;
+    }
+
+    public List<AkeylessSSHIssuer> getAkeylessSSHIssuers() {
+        return akeylessSSHIssuers;
     }
 
     @DataBoundSetter
@@ -57,8 +66,13 @@ public class AkeylessBindingStep extends Step {
     }
 
     @DataBoundSetter
-    public void setAkeylessIssuers(List<AkeylessIssuer> akeylessIssuers) {
-        this.akeylessIssuers = akeylessIssuers;
+    public void setAkeylessPKIIssuers(List<AkeylessPKIIssuer> akeylessPKIIssuers) {
+        this.akeylessPKIIssuers = akeylessPKIIssuers;
+    }
+
+    @DataBoundSetter
+    public void setAkeylessSSHIssuers(List<AkeylessSSHIssuer> akeylessSSHIssuers) {
+        this.akeylessSSHIssuers = akeylessSSHIssuers;
     }
 
     @Override
@@ -101,7 +115,8 @@ public class AkeylessBindingStep extends Step {
                     akeylessAccessor,
                     step.getConfiguration(),
                     step.getAkeylessSecrets(),
-                    step.getAkeylessIssuers());
+                    step.getAkeylessPKIIssuers(),
+                    step.getAkeylessSSHIssuers());
 
             List<String> secretValues = new ArrayList<>();
             secretValues.addAll(overrides.values());

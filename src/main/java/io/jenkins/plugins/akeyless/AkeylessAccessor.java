@@ -21,18 +21,15 @@ import io.jenkins.plugins.akeyless.configuration.AkeylessConfigResolver;
 import io.jenkins.plugins.akeyless.configuration.AkeylessConfiguration;
 import io.jenkins.plugins.akeyless.credentials.AkeylessCredential;
 import io.jenkins.plugins.akeyless.credentials.CredentialsPayload;
-import io.jenkins.plugins.akeyless.model.AkeylessIssuer;
-import io.jenkins.plugins.akeyless.model.AkeylessSecret;
-import io.jenkins.plugins.akeyless.model.AkeylessSecretBase;
-import io.jenkins.plugins.akeyless.model.AkeylessSecretValue;
+import io.jenkins.plugins.akeyless.model.*;
 import java.io.PrintStream;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -61,7 +58,8 @@ public class AkeylessAccessor implements Serializable {
             AkeylessAccessor accessor,
             AkeylessConfiguration configuration,
             List<AkeylessSecret> akeylessSecrets,
-            List<AkeylessIssuer> akeylessIssuers) {
+            List<AkeylessPKIIssuer> akeylessPKIIssuers,
+            List<AkeylessSSHIssuer> akeylessSSHIssuers) {
         Map<String, String> secrets = new HashMap<>();
         AkeylessConfiguration config = pullAndMergeConfiguration(run, configuration);
         String url = config.getAkeylessUrl();
@@ -103,7 +101,8 @@ public class AkeylessAccessor implements Serializable {
             throw new AkeylessPluginException("Authentication failed.", e);
         }
         fillObjectValues(logger, envVars, accessor, token, akeylessSecrets, secrets);
-        fillObjectValues(logger, envVars, accessor, token, akeylessIssuers, secrets);
+        fillObjectValues(logger, envVars, accessor, token, akeylessPKIIssuers, secrets);
+        fillObjectValues(logger, envVars, accessor, token, akeylessSSHIssuers, secrets);
         return secrets;
     }
 
@@ -128,6 +127,7 @@ public class AkeylessAccessor implements Serializable {
             // static secret can be flat String in non JSON format
             Object tempVal = values.get(path);
             if (tempVal instanceof String) {
+                tempVal = StringEscapeUtils.escapeJava(tempVal.toString());
                 String newVal = "{\"data\": \"" + tempVal + "\"}";
                 tempVal = gson.fromJson(JSONObject.fromObject(newVal).toString(), LinkedTreeMap.class);
             }
@@ -239,26 +239,13 @@ public class AkeylessAccessor implements Serializable {
                     GetCertificateValueOutput out = getApi().getCertificateValue(cbody);
                     return gson.fromJson(JSONObject.fromObject(out).toString(), LinkedTreeMap.class);
                 case "SSH_CERT_ISSUER":
-                    AkeylessIssuer issuer = (AkeylessIssuer) akeylessSecret;
-                    GetSSHCertificate sshCertificate = new GetSSHCertificate();
-                    sshCertificate.setToken(token);
-                    sshCertificate.setJson(true);
-                    sshCertificate.setCertIssuerName(issuer.getPath());
-                    sshCertificate.setPublicKeyData(issuer.getPublicKey());
-                    sshCertificate.setCertUsername(issuer.getCertUserName());
-                    sshCertificate.setTtl(issuer.getTtl());
+                    GetSSHCertificate sshCertificate = getSSHCertificateBody(token, (AkeylessSSHIssuer) akeylessSecret);
                     GetSSHCertificateOutput sshout = getApi().getSSHCertificate(sshCertificate);
                     Map<String, String> forJson = new LinkedTreeMap<>();
                     forJson.put("data", sshout.getData());
                     return gson.fromJson(JSONObject.fromObject(forJson).toString(), LinkedTreeMap.class);
                 case "PKI_CERT_ISSUER":
-                    issuer = (AkeylessIssuer) akeylessSecret;
-                    GetPKICertificate pkiCertificate = new GetPKICertificate();
-                    pkiCertificate.certIssuerName(issuer.getPath());
-                    pkiCertificate.setToken(token);
-                    pkiCertificate.setTtl(Long.toString(issuer.getTtl()));
-                    pkiCertificate.setJson(true);
-                    pkiCertificate.setCsrDataBase64(issuer.getCsrBase64());
+                    GetPKICertificate pkiCertificate = getPKICertificateBody(token, (AkeylessPKIIssuer) akeylessSecret);
                     GetPKICertificateOutput pki = getApi().getPKICertificate(pkiCertificate);
                     forJson = new LinkedTreeMap<>();
                     forJson.put("data", pki.getData());
@@ -270,5 +257,30 @@ public class AkeylessAccessor implements Serializable {
         } catch (ApiException e) {
             throw new AkeylessPluginException("Failed to retrieve secret: " + e.getResponseBody(), e);
         }
+    }
+
+    @Nonnull
+    private GetSSHCertificate getSSHCertificateBody(String token, AkeylessSSHIssuer sshIssuer) {
+        GetSSHCertificate sshCertificate = new GetSSHCertificate();
+        sshCertificate.setToken(token);
+        sshCertificate.setJson(true);
+        sshCertificate.setCertIssuerName(sshIssuer.getPath());
+        sshCertificate.setPublicKeyData(sshIssuer.getPublicKey());
+        sshCertificate.setCertUsername(sshIssuer.getCertUserName());
+        sshCertificate.setTtl(sshIssuer.getTtl());
+        return sshCertificate;
+    }
+
+    @Nonnull
+    private GetPKICertificate getPKICertificateBody(String token, AkeylessPKIIssuer pkiIssuer) {
+        GetPKICertificate pkiCertificate = new GetPKICertificate();
+        pkiCertificate.certIssuerName(pkiIssuer.getPath());
+        pkiCertificate.setToken(token);
+        pkiCertificate.setTtl(Long.toString(pkiIssuer.getTtl()));
+        pkiCertificate.setJson(true);
+        pkiCertificate.setCsrDataBase64(pkiIssuer.getCsrBase64());
+        pkiCertificate.setKeyDataBase64(
+                Base64.getEncoder().encodeToString(pkiIssuer.getPublicKey().getBytes(StandardCharsets.UTF_8)));
+        return pkiCertificate;
     }
 }
