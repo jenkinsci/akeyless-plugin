@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <j:validateLink method="doCheckMyField" />
+    <f:entry title="Name" field="path">
+        <f:textbox/>
+    </f:entry>
+    <f:entry title="Public Key" field="publicKey">
+        <f:textarea/>
+    </f:entry>
+    <f:entry title="CSR in base64" field="csrBase64">
+        <f:textarea/>
+    </f:entry>
+    <f:entry title="TTL in seconds" field="ttl">
+        <f:number min="0"/>
+    </f:entry>
+    <f:entry>
+        <f:repeatableProperty field="secretValues" minimum="1" add="Add a key/value pair"/>
+    </f:entry>
+
+    <f:entry title="">
+        <div align="right">
+            <f:repeatableDeleteButton/>
+        </div>
+    </f:entry>
+
+</j:jelly>
