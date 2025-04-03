@@ -28,6 +28,7 @@ public class AkeylessConfiguration extends AbstractDescribableImpl<AkeylessConfi
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_TIMEOUT = 60;
 
+    // lgtm[jenkins/plaintext-storage]
     private String akeylessUrl;
     private String akeylessCredentialId;
     private AkeylessCredential akeylessCredential;

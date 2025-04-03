@@ -3,6 +3,7 @@ package io.jenkins.plugins.akeyless.credentials;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
+import hudson.util.Secret;
 import io.akeyless.client.model.Auth;
 import javax.annotation.CheckForNull;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -13,9 +14,9 @@ import org.kohsuke.stapler.DataBoundSetter;
  */
 public class AccessKeyCredentialsImpl extends AbstractAkeylessBaseStandardCredentials implements AkeylessCredential {
 
-    @NonNull
-    private String accessKey = "";
+    private Secret accessKey;
 
+    // lgtm[jenkins/plaintext-storage]
     @NonNull
     private String accessId = "";
 
@@ -25,13 +26,12 @@ public class AccessKeyCredentialsImpl extends AbstractAkeylessBaseStandardCreden
         super(scope, id, description);
     }
 
-    @NonNull
-    public String getAccessKey() {
+    public Secret getAccessKey() {
         return accessKey;
     }
 
     @DataBoundSetter
-    public void setAccessKey(String accessKey) {
+    public void setAccessKey(Secret accessKey) {
         this.accessKey = accessKey;
     }
 
@@ -53,7 +53,7 @@ public class AccessKeyCredentialsImpl extends AbstractAkeylessBaseStandardCreden
     public Auth getAuth() {
         Auth auth = new Auth();
         auth.setAccessType("api_key");
-        auth.setAccessKey(accessKey);
+        auth.setAccessKey(accessKey.getPlainText());
         auth.setAccessId(accessId);
         return auth;
     }

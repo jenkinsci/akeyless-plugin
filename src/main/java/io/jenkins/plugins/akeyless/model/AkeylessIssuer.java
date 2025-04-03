@@ -11,6 +11,8 @@ import java.util.List;
 public abstract class AkeylessIssuer<T extends AbstractDescribableImpl<T>> extends AbstractDescribableImpl<T>
         implements AkeylessSecretBase {
     private String path;
+
+    // lgtm[jenkins/plaintext-storage]
     private String publicKey;
 
     @NonNull
