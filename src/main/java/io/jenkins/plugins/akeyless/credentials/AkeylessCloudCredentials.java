@@ -12,6 +12,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 public class AkeylessCloudCredentials extends AbstractAkeylessBaseStandardCredentials implements AkeylessCredential {
+    // lgtm[jenkins/plaintext-storage]
     @NonNull
     private String accessId = "";
 
