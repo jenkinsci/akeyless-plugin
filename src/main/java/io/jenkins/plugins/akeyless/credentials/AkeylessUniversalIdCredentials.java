@@ -18,7 +18,7 @@ public class AkeylessUniversalIdCredentials extends AkeylessTokenCredentials {
         CredentialsPayload payload = new CredentialsPayload();
         Auth auth = new Auth();
         auth.setAccessType("universal_identity");
-        auth.setUidToken(getToken());
+        auth.setUidToken(getToken().getPlainText());
         payload.setAuth(auth);
         return payload;
     }

@@ -85,7 +85,7 @@ public class AkeylessAccessor implements Serializable {
 
         CredentialsPayload payload = credential.getCredentialsPayload();
         // authenticate
-        String token = payload.getToken();
+        String token = payload.getToken() == null ? null : payload.getToken().getPlainText();
         try {
             if (token == null || token.isEmpty()) {
                 Auth auth = payload.getAuth();

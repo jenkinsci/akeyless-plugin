@@ -16,8 +16,8 @@ public class AccessKeyCredentialsImpl extends AbstractAkeylessBaseStandardCreden
 
     private Secret accessKey;
 
-    // lgtm[jenkins/plaintext-storage]
     @NonNull
+    @SuppressWarnings("lgtm[jenkins/plaintext-storage]")
     private String accessId = "";
 
     @DataBoundConstructor

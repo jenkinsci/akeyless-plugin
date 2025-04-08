@@ -16,10 +16,13 @@ import io.jenkins.plugins.akeyless.credentials.AkeylessCredential;
 import java.io.Serializable;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 /**
  * @author alexeydolgopyatov
@@ -157,11 +160,13 @@ public class AkeylessConfiguration extends AbstractDescribableImpl<AkeylessConfi
         }
 
         @SuppressWarnings("unused") // used by stapler
+        @POST
+        @Restricted(NoExternalUse.class) // Optional, limits usage to internal only
         public ListBoxModel doFillAkeylessCredentialIdItems(@AncestorInPath Item item, @QueryParameter String uri) {
-            // This is needed for folders: credentials bound to a folder are
-            // realized through domain requirements
+
             List<DomainRequirement> domainRequirements =
                     URIRequirementBuilder.fromUri(uri).build();
+
             return new StandardListBoxModel()
                     .includeEmptyValue()
                     .includeAs(ACL.SYSTEM, item, AkeylessCredential.class, domainRequirements);
