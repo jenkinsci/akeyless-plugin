@@ -15,6 +15,7 @@ import hudson.util.ListBoxModel;
 import io.jenkins.plugins.akeyless.credentials.AkeylessCredential;
 import java.io.Serializable;
 import java.util.List;
+import jenkins.model.Jenkins;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -162,7 +163,20 @@ public class AkeylessConfiguration extends AbstractDescribableImpl<AkeylessConfi
         @SuppressWarnings("unused") // used by stapler
         @POST
         @Restricted(NoExternalUse.class) // Optional, limits usage to internal only
-        public ListBoxModel doFillAkeylessCredentialIdItems(@AncestorInPath Item item, @QueryParameter String uri) {
+        public ListBoxModel doFillAkeylessCredentialIdItems(
+                @AncestorInPath Item item, @AncestorInPath Jenkins jenkins, @QueryParameter String uri) {
+            ListBoxModel result = new StandardListBoxModel().includeEmptyValue();
+            if (item != null) {
+                if (!item.hasPermission(Item.CONFIGURE)) {
+                    return result;
+                }
+            } else if (jenkins != null) {
+                if (!jenkins.hasPermission(Jenkins.ADMINISTER)) {
+                    return result;
+                }
+            } else {
+                return result; // should not happen
+            }
 
             List<DomainRequirement> domainRequirements =
                     URIRequirementBuilder.fromUri(uri).build();
