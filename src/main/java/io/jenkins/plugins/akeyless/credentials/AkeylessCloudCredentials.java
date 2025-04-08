@@ -77,7 +77,7 @@ public class AkeylessCloudCredentials extends AbstractAkeylessBaseStandardCreden
                     new ListBoxModel.Option("GCP", "gcp"),
                     new ListBoxModel.Option("Azure-AD", "azure_ad"));
 
-            if (context != null) {
+            if (context != null && context.hasPermission(Item.CONFIGURE)) {
                 ListBoxModel.Option option = new ListBoxModel.Option("Default", "");
                 options.add(0, option);
             }
