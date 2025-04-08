@@ -48,6 +48,11 @@ public class AkeylessSecret extends AbstractDescribableImpl<AkeylessSecret> impl
         @POST
         @Restricted(NoExternalUse.class)
         public FormValidation doCheckPath(@AncestorInPath Item item, @QueryParameter String value) {
+            if (item != null && !item.hasPermission(Item.CONFIGURE)) {
+                // User does not have the necessary permission
+                return FormValidation.error("You do not have permission to configure this item.");
+            }
+
             if (!Strings.isNullOrEmpty(value)) {
                 return FormValidation.ok();
             } else {
