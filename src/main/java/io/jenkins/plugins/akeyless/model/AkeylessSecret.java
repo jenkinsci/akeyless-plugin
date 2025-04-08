@@ -4,11 +4,16 @@ import com.google.common.base.Strings;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.model.Saveable;
 import hudson.util.FormValidation;
 import java.util.List;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 /**
  * @author alexeydolgopyatov
@@ -40,7 +45,9 @@ public class AkeylessSecret extends AbstractDescribableImpl<AkeylessSecret> impl
             return "Akeyless Secret";
         }
 
-        public FormValidation doCheckPath(@QueryParameter String value) {
+        @POST
+        @Restricted(NoExternalUse.class)
+        public FormValidation doCheckPath(@AncestorInPath Item item, @QueryParameter String value) {
             if (!Strings.isNullOrEmpty(value)) {
                 return FormValidation.ok();
             } else {

@@ -1,11 +1,12 @@
 package io.jenkins.plugins.akeyless.credentials;
 
+import hudson.util.Secret;
 import io.akeyless.client.model.Auth;
 
 public class CredentialsPayload {
-    Auth auth;
-    String token;
-    boolean isCloudIdNeeded;
+    private Auth auth;
+    private Secret token;
+    private boolean isCloudIdNeeded;
 
     public Auth getAuth() {
         return auth;
@@ -15,11 +16,11 @@ public class CredentialsPayload {
         this.auth = auth;
     }
 
-    public String getToken() {
+    public Secret getToken() {
         return token;
     }
 
-    public void setToken(String token) {
+    public void setToken(Secret token) {
         this.token = token;
     }
 

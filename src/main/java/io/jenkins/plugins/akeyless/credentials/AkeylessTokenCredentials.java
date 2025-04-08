@@ -17,13 +17,13 @@ public class AkeylessTokenCredentials extends AbstractAkeylessBaseStandardCreden
     }
 
     @NonNull
-    public String getToken() {
-        return Secret.toString(token);
+    public Secret getToken() {
+        return token;
     }
 
     @DataBoundSetter
-    public void setToken(String token) {
-        this.token = Secret.fromString(token);
+    public void setToken(Secret token) {
+        this.token = token;
     }
 
     @Override

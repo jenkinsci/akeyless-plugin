@@ -17,6 +17,8 @@ public class AkeylessSecretValue extends AbstractDescribableImpl<AkeylessSecretV
 
     private String envVar;
     private boolean isRequired = DescriptorImpl.DEFAULT_IS_REQUIRED;
+
+    @SuppressWarnings("lgtm[jenkins/plaintext-storage]")
     private final String secretKey;
 
     @DataBoundConstructor

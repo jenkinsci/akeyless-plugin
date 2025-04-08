@@ -7,13 +7,17 @@ import hudson.model.Item;
 import hudson.util.ListBoxModel;
 import io.akeyless.client.model.Auth;
 import javax.annotation.CheckForNull;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.verb.POST;
 
 public class AkeylessCloudCredentials extends AbstractAkeylessBaseStandardCredentials implements AkeylessCredential {
-    // lgtm[jenkins/plaintext-storage]
+
     @NonNull
+    @SuppressWarnings("lgtm[jenkins/plaintext-storage]")
     private String accessId = "";
 
     @NonNull
@@ -65,6 +69,8 @@ public class AkeylessCloudCredentials extends AbstractAkeylessBaseStandardCreden
             return "Akeyless Cloud Provider Credentials";
         }
 
+        @POST
+        @Restricted(NoExternalUse.class)
         public ListBoxModel doFillCloudTypeItems(@AncestorInPath Item context) {
             ListBoxModel options = new ListBoxModel(
                     new ListBoxModel.Option("AWS-IAM", "aws_iam"),
