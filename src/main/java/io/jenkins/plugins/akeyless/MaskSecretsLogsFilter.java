@@ -14,9 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- *
- */
+/* The class is borrowed from  https://github.com/jenkinsci/onepassword-secrets-plugin/ */
 public class MaskSecretsLogsFilter extends ConsoleLogFilter implements Serializable {
 
     private static final long serialVersionUID = 1L;
