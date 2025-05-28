@@ -5,9 +5,10 @@
         </f:section>
         <f:entry>
                 <f:repeatableProperty field="akeylessSecrets" minimum="0" header="Akeyless Secret"
-                                      add="Add Akeyless secret"/>
-
-                <f:repeatableProperty field="akeylessIssuers" minimum="0" header="Akeyless Issuer"
-                                      add="Add Akeyless Issuer"/>
+                                      add="Add Secret"/>
+                <f:repeatableProperty field="akeylessPKIIssuers" minimum="0" header="Akeyless PKI Issuer"
+                                      add="Add PKI Issuer"/>
+                <f:repeatableProperty field="akeylessSSHIssuers" minimum="0" header="Akeyless SSH Issuer"
+                                      add="Add SSH Issuer"/>
         </f:entry>
 </j:jelly>

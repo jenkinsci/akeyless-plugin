@@ -125,7 +125,6 @@ public class AkeylessBuildWrapper extends SimpleBuildWrapper {
 
         public DescriptorImpl() {
             super(AkeylessBuildWrapper.class);
-            load();
         }
 
         @Override
