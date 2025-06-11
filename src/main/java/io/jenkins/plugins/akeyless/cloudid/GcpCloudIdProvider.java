@@ -1,7 +1,6 @@
 package io.jenkins.plugins.akeyless.cloudid;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -37,12 +36,6 @@ public class GcpCloudIdProvider implements CloudIdProvider {
             return Utils.readDataFromStream(conn.getInputStream()).toString();
 
         } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (Exception ignore) {
-                }
-            }
             if (conn != null) {
                 conn.disconnect();
             }
