@@ -1,9 +1,7 @@
 package io.jenkins.plugins.akeyless.cloudid;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -32,27 +30,18 @@ public class AzureCloudIdProvider implements CloudIdProvider {
 
         int status = conn.getResponseCode();
         if (status != 200) {
-            throw new IOException("Failed to get token. Status: " + status);
+            throw new RuntimeException("Failed to get token. Status: " + status);
         }
 
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(conn.getInputStream(), java.nio.charset.StandardCharsets.UTF_8))) {
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
+        StringBuilder response = Utils.readDataFromStream(conn.getInputStream());
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> json = mapper.readValue(response.toString(), Map.class);
+        String accessToken = (String) json.get("access_token");
 
-            ObjectMapper mapper = new ObjectMapper();
-            Map<String, Object> json = mapper.readValue(response.toString(), Map.class);
-            String accessToken = (String) json.get("access_token");
-
-            if (accessToken == null || accessToken.isEmpty()) {
-                throw new IOException("Access token not found in response");
-            }
-
-            return Base64.getEncoder().encodeToString(accessToken.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        if (accessToken == null || accessToken.isEmpty()) {
+            throw new IOException("Access token not found in response");
         }
+        return Base64.getEncoder().encodeToString(accessToken.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 
     @Override

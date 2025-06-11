@@ -34,16 +34,7 @@ public class GcpCloudIdProvider implements CloudIdProvider {
                 throw new RuntimeException(
                         "Failed to retrieve identity token from GCP metadata server. Response code: " + responseCode);
             }
-
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-            StringBuilder responseBuilder = new StringBuilder();
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                responseBuilder.append(line);
-            }
-
-            return responseBuilder.toString();
+            return Utils.readDataFromStream(conn.getInputStream()).toString();
 
         } finally {
             if (reader != null) {

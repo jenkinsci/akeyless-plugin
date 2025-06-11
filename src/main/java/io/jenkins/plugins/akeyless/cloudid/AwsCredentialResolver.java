@@ -2,7 +2,6 @@ package io.jenkins.plugins.akeyless.cloudid;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -21,20 +20,10 @@ public class AwsCredentialResolver {
             this.secretAccessKey = secretAccessKey;
             this.sessionToken = sessionToken;
         }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("accessKeyId=").append(accessKeyId);
-            sb.append(", secretAccessKey=").append(secretAccessKey);
-            sb.append(", sessionToken=").append(sessionToken);
-            return sb.toString();
-        }
     }
 
     public static AwsCredentials resolve() throws Exception {
         // 1. Environment Variables
-        // Map env = System.getenv();
         String accessKey = System.getenv("AWS_ACCESS_KEY_ID");
         String secretKey = System.getenv("AWS_SECRET_ACCESS_KEY");
         String sessionToken = System.getenv("AWS_SESSION_TOKEN"); // optional
@@ -94,60 +83,46 @@ public class AwsCredentialResolver {
     }
 
     private static String httpGet(String url, String imdsToken) throws Exception {
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-        conn.setRequestMethod("GET");
-        if (imdsToken != null) {
-            conn.setRequestProperty("X-aws-ec2-metadata-token", imdsToken);
-        }
-
-        if (conn.getResponseCode() != 200) {
-            throw new RuntimeException("Failed to fetch metadata from " + url);
-        }
-
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-        StringBuilder out = new StringBuilder();
+        HttpURLConnection conn = null;
         try {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                out.append(line);
+            conn = (HttpURLConnection) new URL(url).openConnection();
+
+            conn.setRequestMethod("GET");
+            if (imdsToken != null) {
+                conn.setRequestProperty("X-aws-ec2-metadata-token", imdsToken);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+            if (conn.getResponseCode() != 200) {
+                throw new RuntimeException("Failed to fetch metadata from " + url);
+            }
+            return Utils.readDataFromStream(conn.getInputStream()).toString();
         } finally {
-            reader.close();
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
-        return out.toString();
     }
 
     private static AwsCredentials fetchCredentialsFromMetadataService(String urlStr) throws Exception {
         URL url = new URL(urlStr);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setConnectTimeout(3000);
-        conn.setReadTimeout(3000);
-
-        if (conn.getResponseCode() != 200) {
-            throw new RuntimeException("Failed to fetch ECS credentials from " + urlStr);
-        }
-
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-        StringBuilder response = new StringBuilder();
+        HttpURLConnection conn = null;
         try {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
+
+            if (conn.getResponseCode() != 200) {
+                throw new RuntimeException("Failed to fetch ECS credentials from " + urlStr);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            StringBuilder response = Utils.readDataFromStream(conn.getInputStream());
+            Map<String, Object> json = new ObjectMapper().readValue(response.toString(), Map.class);
+            return new AwsCredentials(
+                    (String) json.get("AccessKeyId"), (String) json.get("SecretAccessKey"), (String) json.get("Token"));
         } finally {
-            reader.close();
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
-
-        Map<String, Object> json = new ObjectMapper().readValue(response.toString(), Map.class);
-
-        return new AwsCredentials(
-                (String) json.get("AccessKeyId"), (String) json.get("SecretAccessKey"), (String) json.get("Token"));
     }
 }
