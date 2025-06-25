@@ -1,36 +1,37 @@
 package io.jenkins.plugins.akeyless.configuration;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class AkeylessConfigurationTest {
-    public static enum ConfigEnum {
-        All,
-        URLOnly,
-        CredentialsOnly
+class AkeylessConfigurationTest {
+
+    private enum ConfigEnum {
+        ALL,
+        URL_ONLY,
+        CREDENTIALS_ONLY
     }
 
     @Test
-    public void handleNullConfiguration() {
-        AkeylessConfiguration configuration = testConfig("test", ConfigEnum.All);
+    void handleNullConfiguration() {
+        AkeylessConfiguration configuration = testConfig("test", ConfigEnum.ALL);
         AkeylessConfiguration result = configuration.mergeWithParent(null);
         assertThat(result.getAkeylessCredentialId(), is(result.getAkeylessCredentialId()));
         assertThat(result.getAkeylessUrl(), is(result.getAkeylessUrl()));
     }
 
     @Test
-    public void childShouldPartlyOverwriteParent() {
-        AkeylessConfiguration parent = testConfig("parent", ConfigEnum.All);
-        AkeylessConfiguration child = testConfig("child", ConfigEnum.URLOnly);
+    void childShouldPartlyOverwriteParent() {
+        AkeylessConfiguration parent = testConfig("parent", ConfigEnum.ALL);
+        AkeylessConfiguration child = testConfig("child", ConfigEnum.URL_ONLY);
         AkeylessConfiguration result = child.mergeWithParent(parent);
 
         assertThat(result.getAkeylessCredentialId(), is(parent.getAkeylessCredentialId()));
         assertThat(result.getAkeylessUrl(), is(child.getAkeylessUrl()));
 
-        parent = testConfig("parent", ConfigEnum.All);
-        child = testConfig("child", ConfigEnum.CredentialsOnly);
+        parent = testConfig("parent", ConfigEnum.ALL);
+        child = testConfig("child", ConfigEnum.CREDENTIALS_ONLY);
         result = child.mergeWithParent(parent);
 
         assertThat(result.getAkeylessCredentialId(), is(child.getAkeylessCredentialId()));
@@ -38,9 +39,9 @@ public class AkeylessConfigurationTest {
     }
 
     @Test
-    public void emptyParentShouldBeIgnored() {
+    void emptyParentShouldBeIgnored() {
         AkeylessConfiguration parent = new AkeylessConfiguration();
-        AkeylessConfiguration child = testConfig("child", ConfigEnum.All);
+        AkeylessConfiguration child = testConfig("child", ConfigEnum.ALL);
         AkeylessConfiguration result = child.mergeWithParent(parent);
 
         assertThat(result.getAkeylessCredentialId(), is(child.getAkeylessCredentialId()));
@@ -48,26 +49,26 @@ public class AkeylessConfigurationTest {
     }
 
     @Test
-    public void childShouldCompletlyOverwriteParent() {
-        AkeylessConfiguration parent = testConfig("parent", ConfigEnum.All);
-        AkeylessConfiguration child = testConfig("child", ConfigEnum.All);
+    void childShouldCompletelyOverwriteParent() {
+        AkeylessConfiguration parent = testConfig("parent", ConfigEnum.ALL);
+        AkeylessConfiguration child = testConfig("child", ConfigEnum.ALL);
         AkeylessConfiguration result = child.mergeWithParent(parent);
 
         assertThat(result.getAkeylessCredentialId(), is(child.getAkeylessCredentialId()));
         assertThat(result.getAkeylessUrl(), is(child.getAkeylessUrl()));
     }
 
-    public static AkeylessConfiguration testConfig(String id, ConfigEnum confType) {
+    private static AkeylessConfiguration testConfig(String id, ConfigEnum confType) {
         AkeylessConfiguration configuration = new AkeylessConfiguration();
         switch (confType) {
-            case All:
+            case ALL:
                 configuration.setAkeylessUrl("https://akeyless.io/" + id);
                 configuration.setAkeylessCredentialId(id);
                 return configuration;
-            case URLOnly:
+            case URL_ONLY:
                 configuration.setAkeylessUrl("https://akeyless.io/" + id);
                 return configuration;
-            case CredentialsOnly:
+            case CREDENTIALS_ONLY:
                 configuration.setAkeylessCredentialId(id);
                 return configuration;
         }
