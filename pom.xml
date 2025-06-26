@@ -11,7 +11,7 @@
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>akeyless</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>${changelist}</version>
   <packaging>hpi</packaging>
 
   <name>Akeyless Plugin</name>
@@ -31,12 +31,10 @@
 
   <properties>
     <jenkins.baseline>2.479</jenkins.baseline>
-    <revision>1.0</revision>
-    <changelist>-SNAPSHOT</changelist>
+    <changelist>999999-SNAPSHOT</changelist>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.version>${jenkins.baseline}.3</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
-
     <spotless.check.skip>false</spotless.check.skip>
   </properties>
 
