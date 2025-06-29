@@ -129,13 +129,9 @@
       <url>https://repo.jenkins-ci.org/public/</url>
     </repository>
     <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>central</id>
-      <url>https://akeyless.jfrog.io/artifactory/akeyless-java</url>
+      <id>io.akeyless</id>
+      <url>https://akeyless.jfrog.io/artifactory/akeyless-java/</url>
     </repository>
-
     <repository>
       <id>mvn</id>
       <url>https://repo1.maven.org/maven2/</url>
@@ -145,6 +141,10 @@
     <pluginRepository>
       <id>repo.jenkins-ci.org</id>
       <url>https://repo.jenkins-ci.org/public/</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>io.akeyless</id>
+      <url>https://akeyless.jfrog.io/artifactory/akeyless-java/</url>
     </pluginRepository>
   </pluginRepositories>
 </project>
