@@ -3,4 +3,61 @@
    <f:section title="Akeyless Plugin">
       <f:property field="configuration"/>
    </f:section>
+
+   <div id="akeylessGlobalJWTSection">
+      <f:section title="${%JWT Authentication configuration}">
+
+         <f:entry title="${%Service Id}">
+            <f:textbox field="authWebServiceId" name="authWebServiceId"/>
+         </f:entry>
+         <f:entry title="${%JWT Audience}">
+            <f:textbox field="jwtAudience" name="jwtAudience"/>
+         </f:entry>
+
+         <f:entry title="${%Signing Key Lifetime In Minutes}">
+            <f:number field="keyLifetimeInMinutes" name="keyLifetimeInMinutes" onkeypress='validateNumber(event)'/>
+         </f:entry>
+         <f:entry title="${%JWT Token Duration In Seconds}">
+            <f:number field="tokenDurarionInSeconds" name="tokenDurarionInSeconds" onkeypress='validateNumber(event)'/>
+         </f:entry>
+         <f:entry title="${%Enable Identity Format Fields From Token}" description="DEPRECATED: If checked, populate variables available from the current context">
+            <f:checkbox id="enableIdentityFormatFieldsFromToken" name="enableIdentityFormatFieldsFromToken" field="enableIdentityFormatFieldsFromToken" default="false"/>
+         </f:entry>
+
+         <div id="divListIdentityFormatFieldsFromToken">
+            <f:entry title="${%Identity Format Fields}" name="selectIdentityFormatToken" field="selectIdentityFormatToken">
+               <select id="listIdentityFormatFieldsFromToken" name="selectIdentityFormatToken" class="jenkins-select_input">
+                  <option value="jenkins_full_name">${%jenkins_full_name}</option>
+                  <option value="jenkins_parent_full_name-jenkins_name">${%jenkins_parent_full_name-jenkins_name}</option>
+                  <option value="jenkins_parent_full_name:jenkins_name">${%jenkins_parent_full_name:jenkins_name}</option>
+                  <option value="jenkins_parent_full_name+jenkins_name">${%jenkins_parent_full_name+jenkins_name}</option>
+                  <option value="jenkins_parent_full_name.jenkins_name">${%jenkins_parent_full_name.jenkins_name}</option>
+                  <option value="jenkins_parent_full_name|jenkins_name">${%jenkins_parent_full_name|jenkins_name}</option>
+               </select>
+            </f:entry>
+         </div>
+      </f:section>
+      <div id="akeylessLocalTokenClaims">
+         <f:validateButton title="${%JWT Token Claims}" progress="${%resolving...}"
+                           method="obtainJwtToken" />
+      </div>
+   </div>
+
+   <style type="text/css">
+      .jenkins-select_input {
+      color: black;
+      font-weight: normal;
+      border:2px solid var(--input-border);
+      border-radius:6px;
+      box-shadow:0 0 0 10px transparent;
+      display: block;
+      max-width: 100% !important;
+      min-height: 38px;
+      padding: 8px;
+      transition: var(--standard-transition);
+      width: 100% !important;
+      }
+
+
+   </style>
 </j:jelly>

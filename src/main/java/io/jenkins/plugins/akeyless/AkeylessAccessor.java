@@ -19,14 +19,17 @@ import io.jenkins.plugins.akeyless.cloudid.CloudIdProvider;
 import io.jenkins.plugins.akeyless.cloudid.CloudProviderFactory;
 import io.jenkins.plugins.akeyless.configuration.AkeylessConfigResolver;
 import io.jenkins.plugins.akeyless.configuration.AkeylessConfiguration;
+import io.jenkins.plugins.akeyless.configuration.GlobalAkeylessConfiguration;
 import io.jenkins.plugins.akeyless.credentials.AkeylessCredential;
 import io.jenkins.plugins.akeyless.credentials.CredentialsPayload;
+import io.jenkins.plugins.akeyless.jwt.JwtToken;
 import io.jenkins.plugins.akeyless.model.*;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import javax.annotation.Nonnull;
+import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -75,7 +78,6 @@ public class AkeylessAccessor implements Serializable {
         if (credential == null) {
             throw new AkeylessPluginException("Failed to retrieve Akeyless credential");
         }
-
         ApiClient client = Configuration.getDefaultApiClient();
         client.setBasePath(url);
         client.setVerifyingSsl(!config.getSkipSslVerification());
@@ -92,6 +94,15 @@ public class AkeylessAccessor implements Serializable {
                 if (payload.isCloudIdNeeded()) {
                     CloudIdProvider idProvider = CloudProviderFactory.getCloudIdProvider(auth.getAccessType());
                     auth.setCloudId(idProvider.getCloudId());
+                }
+                if (auth.getAccessType() == Auth.SERIALIZED_NAME_JWT) {
+                    GlobalAkeylessConfiguration globalConfig =
+                            GlobalConfiguration.all().get(GlobalAkeylessConfiguration.class);
+                    if (globalConfig == null) {
+                        throw new AkeylessPluginException("Get Global Configuration");
+                    }
+                    String jwt = JwtToken.getToken(run, globalConfig);
+                    auth.setJwt(jwt);
                 }
                 token = api.auth(auth).getToken();
             }
