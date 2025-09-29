@@ -3,10 +3,9 @@ package io.jenkins.plugins.akeyless.model;
 import hudson.Extension;
 import hudson.model.Descriptor;
 import java.util.List;
-import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-public class AkeylessPKIIssuer extends AkeylessIssuer<AkeylessPKIIssuer> implements AkeylessSecretBase {
+public class AkeylessPKIIssuer extends AkeylessIssuer<AkeylessPKIIssuer> {
     private String csrBase64;
 
     @DataBoundConstructor
@@ -16,7 +15,7 @@ public class AkeylessPKIIssuer extends AkeylessIssuer<AkeylessPKIIssuer> impleme
             String certUserName,
             String publicKey,
             String csrBase64,
-            @Nonnull long ttl,
+            long ttl,
             List<AkeylessSecretValue> secretValues) {
         super(path, name, publicKey, ttl, secretValues);
         this.csrBase64 = csrBase64;

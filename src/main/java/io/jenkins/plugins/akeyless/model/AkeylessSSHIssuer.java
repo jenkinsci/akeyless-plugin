@@ -3,7 +3,6 @@ package io.jenkins.plugins.akeyless.model;
 import hudson.Extension;
 import hudson.model.Descriptor;
 import java.util.List;
-import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class AkeylessSSHIssuer extends AkeylessIssuer<AkeylessSSHIssuer> {
@@ -15,7 +14,7 @@ public class AkeylessSSHIssuer extends AkeylessIssuer<AkeylessSSHIssuer> {
             String name,
             String certUserName,
             String publicKey,
-            @Nonnull long ttl,
+            long ttl,
             List<AkeylessSecretValue> secretValues) {
         super(path, name, publicKey, ttl, secretValues);
         this.certUserName = certUserName;
