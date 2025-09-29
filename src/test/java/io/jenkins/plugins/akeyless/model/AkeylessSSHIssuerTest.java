@@ -12,9 +12,9 @@ class AkeylessSSHIssuerTest {
     void gettersReturnConstructorValues() {
         AkeylessSecretValue value = new AkeylessSecretValue("data");
         AkeylessSSHIssuer issuer =
-                new AkeylessSSHIssuer("/p/ssh", "name", "user", "pubkey", 3600L, Collections.singletonList(value));
+                new AkeylessSSHIssuer("/aaa/ssh", "name", "user", "pubkey", 3600L, Collections.singletonList(value));
 
-        assertThat(issuer.getPath(), is("/p/ssh"));
+        assertThat(issuer.getPath(), is("/aaa/ssh"));
         assertThat(issuer.getCertUserName(), is("user"));
         assertThat(issuer.getPublicKey(), is("pubkey"));
         assertThat(issuer.getTtl(), is(3600L));
