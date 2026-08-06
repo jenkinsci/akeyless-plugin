@@ -29,8 +29,8 @@ import java.util.*;
 import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 /**
  * @author alexeydolgopyatov
